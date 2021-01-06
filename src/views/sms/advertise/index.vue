@@ -23,7 +23,7 @@
           <el-form-item label="广告名称：">
             <el-input v-model="listQuery.name" class="input-width" placeholder="广告名称"></el-input>
           </el-form-item>
-          <el-form-item label="广告位置：">
+          <!-- <el-form-item label="广告位置：">
             <el-select v-model="listQuery.type" placeholder="全部" clearable class="input-width">
               <el-option v-for="item in typeOptions"
                          :key="item.value"
@@ -31,7 +31,7 @@
                          :value="item.value">
               </el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="到期时间：">
             <el-date-picker
               class="input-width"
@@ -62,19 +62,22 @@
         <el-table-column label="广告名称" align="center">
           <template slot-scope="scope">{{scope.row.name}}</template>
         </el-table-column>
-        <el-table-column label="广告位置" width="120" align="center">
+        <!-- <el-table-column label="广告位置" width="120" align="center">
           <template slot-scope="scope">{{scope.row.type | formatType}}</template>
         </el-table-column>
         <el-table-column label="广告图片" width="120" align="center">
           <template slot-scope="scope"><img style="height: 80px" :src="scope.row.pic"></template>
-        </el-table-column>
-        <el-table-column label="时间" width="220" align="center">
+        </el-table-column> -->
+        <el-table-column label="时间" width="320" align="center">
           <template slot-scope="scope">
             <p>开始时间：{{scope.row.startTime | formatTime}}</p>
             <p>到期时间：{{scope.row.endTime | formatTime}}</p>
           </template>
         </el-table-column>
-        <el-table-column label="上线/下线" width="120" align="center">
+        <el-table-column label="广告内容" align="left">
+          <template slot-scope="scope">{{scope.row.note}}</template>
+        </el-table-column>
+        <!-- <el-table-column label="上线/下线" width="120" align="center">
           <template slot-scope="scope">
             <el-switch
               @change="handleUpdateStatus(scope.$index, scope.row)"
@@ -83,13 +86,13 @@
               v-model="scope.row.status">
             </el-switch>
           </template>
-        </el-table-column>
-        <el-table-column label="点击次数" width="120" align="center">
+        </el-table-column> -->
+        <!-- <el-table-column label="点击次数" width="120" align="center">
           <template slot-scope="scope">{{scope.row.clickCount}}</template>
         </el-table-column>
         <el-table-column label="生成订单" width="120" align="center">
           <template slot-scope="scope">{{scope.row.orderCount}}</template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="操作" width="120" align="center">
           <template slot-scope="scope">
             <el-button size="mini"
@@ -303,5 +306,3 @@
     width: 203px;
   }
 </style>
-
-

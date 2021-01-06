@@ -2,30 +2,30 @@
   <div class="app-container">
     <el-card class="filter-container" shadow="never">
       <div>
-        <i class="el-icon-search"></i>
-        <span>筛选搜索</span>
+        <!-- <i class="el-icon-search"></i>
+        <span>query</span> -->
         <el-button
           style="float:right"
           type="primary"
           @click="handleSearchList()"
           size="small">
-          查询搜索
+          search
         </el-button>
         <el-button
           style="float:right;margin-right: 15px"
           @click="handleResetSearch()"
           size="small">
-          重置
+          reset
         </el-button>
       </div>
       <div style="margin-top: 15px">
         <el-form :inline="true" :model="listQuery" size="small" label-width="140px">
-          <el-form-item label="专题名称：">
-            <el-input v-model="listQuery.subjectName" class="input-width" placeholder="专题名称"></el-input>
+          <el-form-item label="Email：">
+            <el-input v-model="listQuery.email" class="input-width" placeholder="email"></el-input>
           </el-form-item>
-          <el-form-item label="推荐状态：">
-            <el-select v-model="listQuery.recommendStatus" placeholder="全部" clearable class="input-width">
-              <el-option v-for="item in recommendOptions"
+          <el-form-item label="userType：">
+            <el-select v-model="listQuery.category" placeholder="user type" class="input-width">
+              <el-option v-for="item in userTypeTOptions"
                          :key="item.value"
                          :label="item.label"
                          :value="item.value">
@@ -37,71 +37,58 @@
     </el-card>
     <el-card class="operate-container" shadow="never">
       <i class="el-icon-tickets"></i>
-      <span>数据列表</span>
-      <el-button size="mini" class="btn-add" @click="handleSelectSubject()">选择专题</el-button>
+      <span>users</span>
     </el-card>
     <div class="table-container">
       <el-table ref="newSubjectTable"
                 :data="list"
                 style="width: 100%;"
-                @selection-change="handleSelectionChange"
-                v-loading="listLoading" border>
-        <el-table-column type="selection" width="60" align="center"></el-table-column>
-        <el-table-column label="编号" width="120" align="center">
-          <template slot-scope="scope">{{scope.row.id}}</template>
-        </el-table-column>
-        <el-table-column label="专题名称" align="center">
-          <template slot-scope="scope">{{scope.row.subjectName}}</template>
-        </el-table-column>
-        <el-table-column label="是否推荐" width="200" align="center">
+                border>
+        <el-table-column type="index" width="50" align="center"></el-table-column>
+        <el-table-column label="Name" prop="username" align="left"></el-table-column>
+        <el-table-column label="Phone" width="200" prop="phone" align="left"></el-table-column>
+        <el-table-column label="Email" prop="email" align="left"></el-table-column>
+        <el-table-column label="Balance" prop="balance" align="left"></el-table-column>
+        <el-table-column label="Type" width="140" prop="category" align="left">
           <template slot-scope="scope">
-            <el-switch
-              @change="handleRecommendStatusStatusChange(scope.$index, scope.row)"
-              :active-value="1"
-              :inactive-value="0"
-              v-model="scope.row.recommendStatus">
-            </el-switch>
+            <el-tag v-show="scope.row.category===0" size="medium" type="danger" effect="plain" style="margin: 3px 0;">
+              {{ userTypeArr[scope.row.category] }}
+            </el-tag>
+            <el-tag v-show="scope.row.category===1" size="medium" type="warning" effect="plain" style="margin: 3px 0;">
+              {{ userTypeArr[scope.row.category] }}
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="排序" width="160" align="center">
-          <template slot-scope="scope">{{scope.row.sort}}</template>
-        </el-table-column>
-        <el-table-column label="状态" width="160" align="center">
-          <template slot-scope="scope">{{scope.row.recommendStatus | formatRecommendStatus}}</template>
-        </el-table-column>
-        <el-table-column label="操作" width="180" align="center">
+        <el-table-column label="Accout Operation" width="150" align="center">
           <template slot-scope="scope">
             <el-button size="mini"
                        type="text"
-                       @click="handleEditSort(scope.$index, scope.row)">设置排序
+                       @click="handleEditAccount(scope.row)">Edit Account
+            </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="User Operation" width="160" align="center">
+          <template slot-scope="scope">
+            <el-button size="mini"
+                       type="text"
+                       @click="handleEditUser(scope.row)">Edit
             </el-button>
             <el-button size="mini"
                        type="text"
-                       @click="handleDelete(scope.$index, scope.row)">删除
+                       @click="handleRestUserPass(scope.row)">Reset Password
+            </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="Delete" width="100" align="center">
+          <template slot-scope="scope">
+            <el-button size="mini"
+                       type="danger"
+                       plain
+                       @click="handleDeleteUser(scope.row)">Delete
             </el-button>
           </template>
         </el-table-column>
       </el-table>
-    </div>
-    <div class="batch-operate-container">
-      <el-select
-        size="small"
-        v-model="operateType" placeholder="批量操作">
-        <el-option
-          v-for="item in operates"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
-      <el-button
-        style="margin-left: 20px"
-        class="search-button"
-        @click="handleBatchOperate()"
-        type="primary"
-        size="small">
-        确定
-      </el-button>
     </div>
     <div class="pagination-container">
       <el-pagination
@@ -110,330 +97,188 @@
         @current-change="handleCurrentChange"
         layout="total, sizes,prev, pager, next,jumper"
         :page-size="listQuery.pageSize"
-        :page-sizes="[5,10,15]"
+        :page-sizes="[10,30,100]"
         :current-page.sync="listQuery.pageNum"
         :total="total">
       </el-pagination>
     </div>
-    <el-dialog title="选择专题" :visible.sync="selectDialogVisible" width="50%">
-      <el-input v-model="dialogData.listQuery.keyword"
-                style="width: 250px;margin-bottom: 20px"
-                size="small"
-                placeholder="专题名称搜索">
-        <el-button slot="append" icon="el-icon-search" @click="handleSelectSearch()"></el-button>
-      </el-input>
-      <el-table :data="dialogData.list"
-                @selection-change="handleDialogSelectionChange" border>
-        <el-table-column type="selection" width="60" align="center"></el-table-column>
-        <el-table-column label="专题名称" align="center">
-          <template slot-scope="scope">{{scope.row.title}}</template>
-        </el-table-column>
-        <el-table-column label="所属分类" width="160" align="center">
-          <template slot-scope="scope">{{scope.row.categoryName}}</template>
-        </el-table-column>
-        <el-table-column label="添加时间" width="160" align="center">
-          <template slot-scope="scope">{{scope.row.createTime | formatTime}}</template>
-        </el-table-column>
-      </el-table>
-      <div class="pagination-container">
-        <el-pagination
-          background
-          @size-change="handleDialogSizeChange"
-          @current-change="handleDialogCurrentChange"
-          layout="prev, pager, next"
-          :current-page.sync="dialogData.listQuery.pageNum"
-          :page-size="dialogData.listQuery.pageSize"
-          :page-sizes="[5,10,15]"
-          :total="dialogData.total">
-        </el-pagination>
-      </div>
-      <div style="clear: both;"></div>
-      <div slot="footer">
-        <el-button  size="small" @click="selectDialogVisible = false">取 消</el-button>
-        <el-button  size="small" type="primary" @click="handleSelectDialogConfirm()">确 定</el-button>
-      </div>
-    </el-dialog>
-    <el-dialog title="设置排序"
-               :visible.sync="sortDialogVisible"
-               width="40%">
-      <el-form :model="sortDialogData"
-               label-width="150px">
-        <el-form-item label="排序：">
-          <el-input v-model="sortDialogData.sort" style="width: 200px"></el-input>
+    <!-- account pop-->
+    <el-dialog title="charge" :visible.sync="dialogAccountVisible" width="600px">
+      <el-form :model="accountForm" label-width="90px" label-position="left">
+        <el-form-item label="account">
+          <el-input v-model="accountForm.number"></el-input>
         </el-form-item>
       </el-form>
-      <span slot="footer">
-        <el-button @click="sortDialogVisible = false" size="small">取 消</el-button>
-        <el-button type="primary" @click="handleUpdateSort" size="small">确 定</el-button>
-      </span>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">cancel</el-button>
+        <el-button type="primary" @click="charge">confirm</el-button>
+      </div>
+    </el-dialog>
+    <!-- user pop -->
+    <el-dialog title="Edit User" :visible.sync="dialogUserVisible" width="600px">
+      <el-form ref="userForm" :model="userForm" :rules="userFormRule" label-width="90px" label-position="left">
+        <!--        <el-form-item label="ABN" prop="aba" v-if="userForm.category===0">-->
+        <!--          <el-input v-model="userForm.aba" ></el-input>-->
+        <!--        </el-form-item>-->
+        <el-form-item label="Name" prop="username">
+          <el-input v-model="userForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="Phone" prop="phone">
+          <el-input v-model="userForm.phone"></el-input>
+        </el-form-item>
+        <el-form-item label="Name" prop="email">
+          <el-input v-model="userForm.email"></el-input>
+        </el-form-item>
+        <el-form-item label="userType" prop="category">
+          <el-select v-model="userForm.category" placeholder="user type" class="input-width">
+            <el-option v-for="item in userTypeTOptions"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogUserVisible = false">cancel</el-button>
+        <el-button type="primary" @click="confirmOpreateUser('userForm')">confirm</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
 <script>
-  import {fetchList,updateRecommendStatus,deleteHomeSubject,createHomeSubject,updateHomeSubjectSort} from '@/api/homeSubject';
-  import {fetchList as fetchSubjectList} from '@/api/subject';
-  import {formatDate} from '@/utils/date';
+import {getUserList, updateUser, deleteUser, alterAccount} from '@/api/users.js';
 
-  const defaultListQuery = {
-    pageNum: 1,
-    pageSize: 5,
-    subjectName: null,
-    recommendStatus: null
-  };
-  const defaultRecommendOptions = [
-    {
-      label: '未推荐',
-      value: 0
-    },
-    {
-      label: '推荐中',
-      value: 1
-    }
-  ];
-  export default {
-    name: 'homeSubjectList',
-    data() {
-      return {
-        listQuery: Object.assign({}, defaultListQuery),
-        recommendOptions: Object.assign({}, defaultRecommendOptions),
-        list: null,
-        total: null,
-        listLoading: false,
-        multipleSelection: [],
-        operates: [
-          {
-            label: "设为推荐",
-            value: 0
-          },
-          {
-            label: "取消推荐",
-            value: 1
-          },
-          {
-            label: "删除",
-            value: 2
-          }
+export default {
+  name: 'homeSubjectList',
+  data() {
+    return {
+      listQuery: {pageNum: 1, pageSize: 10, email: '', category: ""},
+      list: null,
+      total: null,
+      userTypeArr: ["Ordinary User", "Business User"],
+      userTypeTOptions: [{
+        value: 0,
+        label: "Ordinary User"
+      }, {
+        value: 1,
+        label: "Business User"
+      }],
+      dialogAccountVisible: false,
+      accountForm: {number: ''},
+      selectId: "",
+      dialogUserVisible: false,
+      userForm: {
+        aba: '',
+        username: '',
+        phone: '',
+        email: '',
+        category: 0
+      },
+      userFormRule: {
+        aba: [
+          {required: true, message: 'ABN is required', trigger: 'blur'}
         ],
-        operateType: null,
-        selectDialogVisible:false,
-        dialogData:{
-          list: null,
-          total: null,
-          multipleSelection:[],
-          listQuery:{
-            keyword: null,
-            pageNum: 1,
-            pageSize: 5
+        username: [
+          {required: true, message: 'Name is required', trigger: 'blur'}
+        ],
+        phone: [
+          {required: true, message: 'Phone is required', trigger: 'blur'}
+        ],
+        email: [
+          {required: true, message: 'Email is required', trigger: 'blur'}
+        ],
+        category: [
+          {required: true, message: 'User Type is required', trigger: 'change'}
+        ]
+      }
+    }
+  },
+  created() {
+    this.getUsers(this.listQuery);
+  },
+  methods: {
+    charge() {
+      alterAccount(this.selectId, {status: parseInt(this.accountForm.number)})
+      this.dialogAccountVisible = false
+      this.selectId = ""
+    },
+    getUsers(data) {
+      getUserList(data).then(res => {
+        this.list = res.data.list
+        console.log(res)
+        this.total = res.data.total
+      })
+    },
+    handleResetSearch() {
+      this.listQuery = {pageNum: 1, pageSize: 10, email: '', category: ""}
+      this.getUsers(this.listQuery)
+    },
+    handleSearchList() {
+      this.listQuery.pageNum = 1;
+      this.getUsers(this.listQuery);
+    },
+    handleSizeChange(val) {
+      this.listQuery.pageNum = 1;
+      this.listQuery.pageSize = val;
+      this.getUsers(this.listQuery)
+    },
+    handleCurrentChange(val) {
+      this.listQuery.pageNum = val;
+      this.getUsers(this.listQuery)
+    },
+    // 修改余额
+    handleEditAccount(row) {
+      this.dialogAccountVisible = true
+      this.selectId = row.id
+    },
+
+    handleDeleteUser(row) {
+      this.$confirm('This operation will permanently delete this user. Do you want to continue ?', 'tips', {
+        confirmButtonText: 'confirm',
+        cancelButtonText: 'cancel',
+        type: 'warning'
+      }).then(() => {
+        deleteUser(row.id).then(res => {
+          if (res.code === 200) {
+            this.$message.success('delete user success')
+            this.getUsers(this.listQuery)
+          } else {
+            this.$message.error(res.message)
           }
-        },
-        sortDialogVisible:false,
-        sortDialogData:{sort:0,id:null}
+        })
+      }).catch(() => {
+      });
+    },
+    handleRestUserPass(row) {
+      updateUser({password: 'StarX123456', id: row.id}).then(res => {
+        this.$message.success('password is reset as StarX123456 !');
+      })
+    },
+    handleEditUser(row) {
+      this.userForm = {
+        id: row.id,
+        aba: row.aba,
+        username: row.username,
+        phone: row.phone,
+        email: row.email,
+        category: row.category
       }
+      this.dialogUserVisible = true
     },
-    created() {
-      this.getList();
-    },
-    filters:{
-      formatRecommendStatus(status){
-        if(status===1){
-          return '推荐中';
-        }else{
-          return '未推荐';
+    confirmOpreateUser(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          updateUser(this.userForm).then(res => {
+            this.dialogUserVisible = false
+            this.$message.success('edit user success!');
+            // 重新获取所有zone fee列表
+            this.getUsers(this.listQuery)
+          })
         }
-      },
-      formatTime(time){
-        if(time==null||time===''){
-          return 'N/A';
-        }
-        let date = new Date(time);
-        return formatDate(date, 'yyyy-MM-dd hh:mm:ss')
-      },
-    },
-    methods: {
-      handleResetSearch() {
-        this.listQuery = Object.assign({}, defaultListQuery);
-      },
-      handleSearchList() {
-        this.listQuery.pageNum = 1;
-        this.getList();
-      },
-      handleSelectionChange(val){
-        this.multipleSelection = val;
-      },
-      handleSizeChange(val) {
-        this.listQuery.pageNum = 1;
-        this.listQuery.pageSize = val;
-        this.getList();
-      },
-      handleCurrentChange(val) {
-        this.listQuery.pageNum = val;
-        this.getList();
-      },
-      handleRecommendStatusStatusChange(index,row){
-        this.updateRecommendStatusStatus(row.id,row.recommendStatus);
-      },
-      handleDelete(index,row){
-        this.deleteSubject(row.id);
-      },
-      handleBatchOperate(){
-        if (this.multipleSelection < 1) {
-          this.$message({
-            message: '请选择一条记录',
-            type: 'warning',
-            duration: 1000
-          });
-          return;
-        }
-        let ids = [];
-        for (let i = 0; i < this.multipleSelection.length; i++) {
-          ids.push(this.multipleSelection[i].id);
-        }
-        if (this.operateType === 0) {
-          //设为推荐
-          this.updateRecommendStatusStatus(ids,1);
-        } else if (this.operateType === 1) {
-          //取消推荐
-          this.updateRecommendStatusStatus(ids,0);
-        } else if(this.operateType===2){
-          //删除
-          this.deleteSubject(ids);
-        }else {
-          this.$message({
-            message: '请选择批量操作类型',
-            type: 'warning',
-            duration: 1000
-          });
-        }
-      },
-      handleSelectSubject(){
-        this.selectDialogVisible=true;
-        this.dialogData.listQuery.keyword=null;
-        this.getDialogList();
-      },
-      handleSelectSearch(){
-        this.getDialogList();
-      },
-      handleDialogSizeChange(val) {
-        this.dialogData.listQuery.pageNum = 1;
-        this.dialogData.listQuery.pageSize = val;
-        this.getDialogList();
-      },
-      handleDialogCurrentChange(val) {
-        this.dialogData.listQuery.pageNum = val;
-        this.getDialogList();
-      },
-      handleDialogSelectionChange(val){
-        this.dialogData.multipleSelection = val;
-      },
-      handleSelectDialogConfirm(){
-        if (this.dialogData.multipleSelection < 1) {
-          this.$message({
-            message: '请选择一条记录',
-            type: 'warning',
-            duration: 1000
-          });
-          return;
-        }
-        let selectSubjects = [];
-        for (let i = 0; i < this.dialogData.multipleSelection.length; i++) {
-          selectSubjects.push({
-            subjectId:this.dialogData.multipleSelection[i].id,
-            subjectName:this.dialogData.multipleSelection[i].title
-          });
-        }
-        this.$confirm('使用要进行添加操作?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          createHomeSubject(selectSubjects).then(response=>{
-            this.selectDialogVisible=false;
-            this.dialogData.multipleSelection=[];
-            this.getList();
-            this.$message({
-              type: 'success',
-              message: '添加成功!'
-            });
-          });
-        });
-      },
-      handleEditSort(index,row){
-        this.sortDialogVisible=true;
-        this.sortDialogData.sort=row.sort;
-        this.sortDialogData.id=row.id;
-      },
-      handleUpdateSort(){
-        this.$confirm('是否要修改排序?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          updateHomeSubjectSort(this.sortDialogData).then(response=>{
-            this.sortDialogVisible=false;
-            this.getList();
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            });
-          });
-        })
-      },
-      getList() {
-        this.listLoading = true;
-        fetchList(this.listQuery).then(response => {
-          this.listLoading = false;
-          this.list = response.data.list;
-          this.total = response.data.total;
-        })
-      },
-      updateRecommendStatusStatus(ids,status){
-        this.$confirm('是否要修改推荐状态?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          let params=new URLSearchParams();
-          params.append("ids",ids);
-          params.append("recommendStatus",status);
-          updateRecommendStatus(params).then(response=>{
-            this.getList();
-            this.$message({
-              type: 'success',
-              message: '修改成功!'
-            });
-          });
-        }).catch(() => {
-          this.$message({
-            type: 'success',
-            message: '已取消操作!'
-          });
-          this.getList();
-        });
-      },
-      deleteSubject(ids){
-        this.$confirm('是否要删除该推荐?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          let params=new URLSearchParams();
-          params.append("ids",ids);
-          deleteHomeSubject(params).then(response=>{
-            this.getList();
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            });
-          });
-        })
-      },
-      getDialogList(){
-        fetchSubjectList(this.dialogData.listQuery).then(response=>{
-          this.dialogData.list=response.data.list;
-          this.dialogData.total=response.data.total;
-        })
-      }
+      })
     }
   }
+}
 </script>
 <style></style>

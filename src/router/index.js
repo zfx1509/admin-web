@@ -29,7 +29,7 @@ export const constantRouterMap = [
       path: 'home',
       name: 'home',
       component: () => import('@/views/home/index'),
-      meta: {title: '首页', icon: 'home'}
+      meta: {title: 'Home', icon: 'home'}
     }]
   }
 ]
@@ -263,6 +263,12 @@ export const asyncRouterMap = [
         meta: {title: '人气推荐', icon: 'sms-hot'}
       },
       {
+        path: 'message',
+        name: 'message',
+        component: () => import('@/views/sms/message/index'),
+        meta: {title: '留言', icon: 'sms-subject'}
+      },
+      {
         path: 'subject',
         name: 'homeSubject',
         component: () => import('@/views/sms/subject/index'),
@@ -362,7 +368,7 @@ export const asyncRouterMap = [
 ]
 
 export default new Router({
-  // mode: 'history', //后端支持可开
+  mode: 'history', //后端支持可开
   scrollBehavior: () => ({y: 0}),
   routes: constantRouterMap
 })

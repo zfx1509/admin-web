@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function fetchList(params) {
   return request({
-    url: '/role/list',
+    url: '/starx-admin/role/list',
     method: 'get',
     params: params
   })
@@ -10,7 +10,7 @@ export function fetchList(params) {
 
 export function createRole(data) {
   return request({
-    url: '/role/create',
+    url: '/starx-admin/role/create',
     method: 'post',
     data: data
   })
@@ -18,7 +18,7 @@ export function createRole(data) {
 
 export function updateRole(id, data) {
   return request({
-    url: '/role/update/' + id,
+    url: '/starx-admin/role/update/' + id,
     method: 'post',
     data: data
   })
@@ -26,7 +26,7 @@ export function updateRole(id, data) {
 
 export function updateStatus(id, params) {
   return request({
-    url: '/role/updateStatus/' + id,
+    url: '/starx-admin/role/updateStatus/' + id,
     method: 'post',
     params: params
   })
@@ -34,7 +34,7 @@ export function updateStatus(id, params) {
 
 export function deleteRole(data) {
   return request({
-    url:'/role/delete',
+    url:'/starx-admin/role/delete',
     method:'post',
     data:data
   })
@@ -42,28 +42,28 @@ export function deleteRole(data) {
 
 export function fetchAllRoleList() {
   return request({
-    url: '/role/listAll',
+    url: '/starx-admin/role/listAll',
     method: 'get'
   })
 }
 
 export function listMenuByRole(roleId) {
   return request({
-    url: '/role/listMenu/'+roleId,
+    url: '/starx-admin/role/listMenu/'+roleId,
     method: 'get'
   })
 }
 
 export function listResourceByRole(roleId) {
   return request({
-    url: '/role/listResource/'+roleId,
+    url: '/starx-admin/role/listResource/'+roleId,
     method: 'get'
   })
 }
 
 export function allocMenu(data) {
   return request({
-    url: '/role/allocMenu',
+    url: '/starx-admin/role/allocMenu',
     method: 'post',
     data:data
   })
@@ -71,7 +71,7 @@ export function allocMenu(data) {
 
 export function allocResource(data) {
   return request({
-    url: '/role/allocResource',
+    url: '/starx-admin/role/allocResource',
     method: 'post',
     data:data
   })

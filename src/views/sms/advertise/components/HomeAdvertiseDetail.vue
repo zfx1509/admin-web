@@ -8,7 +8,7 @@
       <el-form-item label="广告名称：" prop="name">
         <el-input v-model="homeAdvertise.name" class="input-width"></el-input>
       </el-form-item>
-      <el-form-item label="广告位置：">
+      <!-- <el-form-item label="广告位置：">
         <el-select v-model="homeAdvertise.type">
           <el-option
             v-for="type in typeOptions"
@@ -17,7 +17,7 @@
             :value="type.value">
           </el-option>
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="开始时间：" prop="startTime">
         <el-date-picker
           type="datetime"
@@ -30,7 +30,7 @@
           placeholder="选择日期"
           v-model="homeAdvertise.endTime"></el-date-picker>
       </el-form-item>
-      <el-form-item label="上线/下线：">
+      <!-- <el-form-item label="上线/下线：">
         <el-radio-group v-model="homeAdvertise.status">
           <el-radio :label="0">下线</el-radio>
           <el-radio :label="1">上线</el-radio>
@@ -38,14 +38,14 @@
       </el-form-item>
       <el-form-item label="广告图片：">
         <single-upload v-model="homeAdvertise.pic"></single-upload>
-      </el-form-item>
-      <el-form-item label="排序：">
+      </el-form-item> -->
+      <!-- <el-form-item label="排序：">
         <el-input v-model="homeAdvertise.sort" class="input-width"></el-input>
       </el-form-item>
       <el-form-item label="广告链接：" prop="url">
         <el-input v-model="homeAdvertise.url" class="input-width"></el-input>
-      </el-form-item>
-      <el-form-item label="广告备注：">
+      </el-form-item> -->
+      <el-form-item label="广告内容：" prop="note">
         <el-input
           class="input-width"
           type="textarea"
@@ -102,17 +102,14 @@
             {required: true, message: '请输入广告名称', trigger: 'blur'},
             {min: 2, max: 140, message: '长度在 2 到 140 个字符', trigger: 'blur'}
           ],
-          url: [
-            {required: true, message: '请输入广告链接', trigger: 'blur'}
-          ],
           startTime: [
             {required: true, message: '请选择开始时间', trigger: 'blur'}
           ],
           endTime: [
             {required: true, message: '请选择到期时间', trigger: 'blur'}
           ],
-          pic: [
-            {required: true, message: '请选择广告图片', trigger: 'blur'}
+          note: [
+            {required: true, message: '请输入广告内容', trigger: 'blur'}
           ]
         },
         typeOptions: Object.assign({}, defaultTypeOptions)
@@ -181,5 +178,3 @@
     width: 70%;
   }
 </style>
-
-

@@ -7,15 +7,16 @@
                ref="loginForm"
                label-position="left">
         <div style="text-align: center">
-          <svg-icon icon-class="login-mall" style="width: 56px;height: 56px;color: #409EFF"></svg-icon>
+          <img src="../../assets/logo_black.png" alt="" style="width: 140px;object-fit: contain;">
+          <!-- <svg-icon icon-class="login-mall" style="width: 56px;height: 56px;color: #409EFF"></svg-icon> -->
         </div>
-        <h2 class="login-title color-main">mall-admin-web</h2>
+        <h3 class="login-title color-main">starx-admin</h3>
         <el-form-item prop="username">
           <el-input name="username"
                     type="text"
                     v-model="loginForm.username"
                     autoComplete="on"
-                    placeholder="请输入用户名">
+                    placeholder="userName">
           <span slot="prefix">
             <svg-icon icon-class="user" class="color-main"></svg-icon>
           </span>
@@ -27,27 +28,28 @@
                     @keyup.enter.native="handleLogin"
                     v-model="loginForm.password"
                     autoComplete="on"
-                    placeholder="请输入密码">
+                    placeholder="password">
           <span slot="prefix">
             <svg-icon icon-class="password" class="color-main"></svg-icon>
           </span>
             <span slot="suffix" @click="showPwd">
-            <svg-icon icon-class="eye" class="color-main"></svg-icon>
+            <svg-icon v-show="pwdType" icon-class="eye" class="color-main"></svg-icon>
+            <i v-show="!pwdType" class="el-icon-view color-main"></i>
           </span>
           </el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 60px;text-align: center">
           <el-button style="width: 45%" type="primary" :loading="loading" @click.native.prevent="handleLogin">
-            登录
+            Sign In
           </el-button>
-          <el-button style="width: 45%" type="primary" @click.native.prevent="handleTry">
+          <!-- <el-button style="width: 45%" type="primary" @click.native.prevent="handleTry">
             获取体验账号
-          </el-button>
+          </el-button> -->
         </el-form-item>
       </el-form>
     </el-card>
     <img :src="login_center_bg" class="login-center-layout">
-    <el-dialog
+    <!-- <el-dialog
       title="公众号二维码"
       :visible.sync="dialogVisible"
       :show-close="false"
@@ -61,7 +63,7 @@
       <span slot="footer" class="dialog-footer">
     <el-button type="primary" @click="dialogConfirm">确定</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -166,7 +168,7 @@
     right: 0;
     width: 360px;
     margin: 140px auto;
-    border-top: 10px solid #409EFF;
+    /* border-top: 10px solid #409EFF; */
   }
 
   .login-title {
