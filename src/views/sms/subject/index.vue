@@ -199,7 +199,9 @@ export default {
   },
   methods: {
     charge() {
-      alterAccount(this.selectId, {status: parseInt(this.accountForm.number)})
+      alterAccount(this.selectId, {balance: parseInt(this.accountForm.number), id: this.selectId}).then(res => {
+        this.getUsers(this.listQuery);
+      })
       this.dialogAccountVisible = false
       this.selectId = ""
     },

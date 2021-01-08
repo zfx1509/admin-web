@@ -57,11 +57,23 @@
       </el-table>
     </div>
     <!-- feePop -->
-    <el-dialog  :title="feeTitle" :visible.sync="dialogFeeVisible" width="700px">
+    <el-dialog :title="feeTitle" :visible.sync="dialogFeeVisible" width="700px">
       <el-form :model="feeForm" :rules="rules" label-width="90px" label-position="left" ref="feeForm">
-        <el-form-item label="condition" prop="comment">
-          <el-input v-model.trim="feeForm.comment"></el-input>
+        <el-form-item label="Ladder" prop="ladderId">
+          <el-select v-model="feeForm.ladderId" style="width: 100%">
+            <el-option
+              v-for="item in ladderList"
+              :key="`ladderId-${item.ladderId}`"
+              :label="`${item.minSize}L < S <= ${item.maxSize}L; ${item.minWeight}Kg < W <= ${item.maxWeight}Kg`"
+              :value="item.id"
+              @click.native="setComment(item)"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
+<!--        <el-form-item label="condition" prop="comment">-->
+<!--          <el-input v-model.trim="feeForm.comment" disabled></el-input>-->
+<!--        </el-form-item>-->
         <el-form-item label="Zone1 Fee" prop="zoneOneFee">
           <el-input v-model.trim="feeForm.zoneOneFee"></el-input>
         </el-form-item>
@@ -84,7 +96,15 @@
 </template>
 
 <script>
-import {fetchFeeList, addZoneFee, updateZoneFee, deleteZoneFee, getListByAreaId, getListByAreaLevel} from '@/api/branch'
+import {
+  fetchFeeList,
+  getLadderLevel,
+  addZoneFee,
+  updateZoneFee,
+  deleteZoneFee,
+  getListByAreaId,
+  getListByAreaLevel
+} from '@/api/branch'
 
 export default {
   name: "menuList",
@@ -96,7 +116,7 @@ export default {
         "areaId": '',
         "comment": "",
         "id": '',
-        "ladderId": '',
+        "ladderId": "",
         "zoneFourFee": '',
         "zoneOneFee": '',
         "zoneThreeFee": '',
@@ -104,6 +124,9 @@ export default {
       },
       selectArea: "",
       rules: {
+        ladderId: [
+          {required: true, message: 'ladderId is required', trigger: 'change'}
+        ],
         comment: [
           {required: true, message: 'comment is required', trigger: 'blur'}
         ],
@@ -121,17 +144,22 @@ export default {
         ]
       },
       list: [],
-      citiesList: []
+      citiesList: [],
+      ladderList: []
     }
   },
   created() {
     this.getCities();
+    this.getLadderLevels();
   },
   watch: {
     $route(route) {
     }
   },
   methods: {
+    setComment(item) {
+      this.feeForm.comment = `${item.minSize}L < S <= ${item.maxSize}L; ${item.minWeight}Kg < W <= ${item.maxWeight}Kg`
+    },
     getList() {
       getListByAreaId({areaId: this.selectArea}).then(res => {
         this.list = res.data
@@ -142,13 +170,18 @@ export default {
         this.citiesList = res.data
       })
     },
+    getLadderLevels() {
+      getLadderLevel().then(res => {
+        this.ladderList = res.data
+      })
+    },
     // add
     handleAddFee() {
       this.feeForm = {
         "areaId": this.selectArea,
         "comment": "",
         "id": '',
-        "ladderId": '',
+        "ladderId": "",
         "zoneFourFee": '',
         "zoneOneFee": '',
         "zoneThreeFee": '',

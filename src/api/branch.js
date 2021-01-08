@@ -127,3 +127,34 @@ export function getListByAreaLevel(params) {
     params
   })
 }
+
+export function getLadderLevel(params) {
+  return request({
+    url:'/starx-admin/fee/ladder/list',
+    method:'get',
+    params
+  })
+}
+
+export function updateLadderLevel(data) {
+  return request({
+    url:'/starx-admin/fee/ladder/update/' + data.id,
+    method:'post',
+    data
+  })
+}
+
+export function deleteLadder(id) {
+  return request({
+    url:'/starx-admin/fee/ladder/delete/' + id,
+    method:'delete'
+  })
+}
+
+export function addLadder(data) {
+  return request({
+    url:'/starx-admin/fee/ladder/create',
+    method:'post',
+    data: data
+  })
+}

@@ -7,40 +7,47 @@
       <el-tab-pane label="Zone" name="second">
         <cityZone v-if="activeName==='second'"></cityZone>
       </el-tab-pane>
+      <el-tab-pane label="Ladder" name="third">
+        <ladder v-if="activeName==='third'"></ladder>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 
 <script>
-  // import { getAreaList, addArea, updateArea, deleteArea, getTheDepot, addDepot, updateDepot, deleteDepot } from '@/api/branch'
-  import cityBranch from './cityBranch.vue'
-  import cityZone from './cityZone.vue'
-  export default {
-    name: "menuList",
-    components:{ cityBranch,cityZone },
-    data() {
-      return {
-        activeName: 'first'
-      }
-    },
-    methods: {
-      handleClick(tab, event) {
-        console.log(this.activeName)
-        console.log(tab, event);
-      }
-    }
+// import { getAreaList, addArea, updateArea, deleteArea, getTheDepot, addDepot, updateDepot, deleteDepot } from '@/api/branch'
+import cityBranch from './cityBranch.vue'
+import cityZone from './cityZone.vue'
+import ladder from './ladder.vue'
 
+export default {
+  name: "menuList",
+  components: {cityBranch, cityZone, ladder},
+  data() {
+    return {
+      activeName: 'first'
+    }
+  },
+  methods: {
+    handleClick(tab, event) {
+      console.log(this.activeName)
+      console.log(tab, event);
+    }
   }
+
+}
 </script>
 
 <style lang="scss">
-  .city-setting-container{
-    height: calc(100vh - 50px);
-    .tab-container{
-      height: 100%;
-      .el-tabs__content{
-        height: calc(100% - 55px);
-      }
+.city-setting-container {
+  height: calc(100vh - 50px);
+
+  .tab-container {
+    height: 100%;
+
+    .el-tabs__content {
+      height: calc(100% - 55px);
     }
   }
+}
 </style>
