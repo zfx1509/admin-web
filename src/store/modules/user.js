@@ -17,7 +17,7 @@ const user = {
       state.name = name
     },
     SET_AVATAR: (state, avatar) => {
-      state.avatar = avatar
+      state.avatar = require('../../assets/avatar.png')
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles

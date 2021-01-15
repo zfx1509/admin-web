@@ -62,8 +62,8 @@
         <el-form-item label="Ladder" prop="ladderId">
           <el-select v-model="feeForm.ladderId" style="width: 100%">
             <el-option
-              v-for="item in ladderList"
-              :key="`ladderId-${item.ladderId}`"
+              v-for="(item,index) in ladderList"
+              :key="`ladderId-${index}`"
               :label="`${item.minSize}L < S <= ${item.maxSize}L; ${item.minWeight}Kg < W <= ${item.maxWeight}Kg`"
               :value="item.id"
               @click.native="setComment(item)"
@@ -88,7 +88,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">cancel</el-button>
+        <el-button @click="dialogFeeVisible = false">cancel</el-button>
         <el-button type="primary" @click="confirmOpreateZoneFee('feeForm')">confirm</el-button>
       </div>
     </el-dialog>
